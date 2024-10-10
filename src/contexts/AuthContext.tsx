@@ -21,8 +21,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [apiUrl, setApiUrl] = useState(import.meta.env.VITE_DEFAULT_API_URL);
+  const [apiUrl, setApiUrl] = useState(import.meta.env.VITE_DEFAULT_API_URL || '');
   const [token, setToken] = useState<string | null>(null);
+
   const api = axios.create({
     baseURL: apiUrl,
     withCredentials: true,
@@ -30,25 +31,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        const response = await api.get('/auth/user');
-        setUser(response.data);
-      } catch (error) {
-        setUser(null);
+      if (token) {
+        try {
+          const response = await api.get('/auth/user');
+          setUser(response.data);
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+          setUser(null);
+          setToken(null);
+        }
       }
     };
     checkAuth();
-  }, [apiUrl]);
+  }, [token, apiUrl]);
 
   const login = async (username: string, password: string, newApiUrl: string) => {
     setApiUrl(newApiUrl);
     const response = await api.post('/auth/login', { username, password });
     setToken(response.data.token);
+    setUser(response.data.user);
   };
 
   const register = async (username: string, password: string) => {
     const response = await api.post('/auth/register', { username, password });
     setToken(response.data.token);
+    setUser(response.data.user);
   };
 
   const logout = async () => {

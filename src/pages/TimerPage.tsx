@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import useApi from '../hooks/useApi';
+import Timer from '../components/Timer';
+import TaskList from '../components/TaskList';
 
 interface Task {
   id: string;
@@ -14,7 +16,7 @@ interface FocusSession {
 }
 
 function TimerPage() {
-  const [selectedTask, _setSelectedTask] = useState('');
+  const [selectedTask, setSelectedTask] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [isBreak, setIsBreak] = useState(false);
@@ -26,7 +28,7 @@ function TimerPage() {
   useEffect(() => {
     fetchTasks();
     fetchFocusSessions();
-  });
+  }, []);
 
   const fetchTasks = async () => {
     try {
@@ -66,10 +68,8 @@ function TimerPage() {
 
   const handleStartStop = async () => {
     if (!isRunning && !isBreak && selectedTask) {
-      // Start a new focus session
       setIsRunning(true);
     } else if (isRunning && !isBreak) {
-      // End the current focus session
       setIsRunning(false);
       try {
         const response = await api.post('/focus-sessions', {
@@ -84,7 +84,27 @@ function TimerPage() {
     }
   };
 
-  // ... rest of the component remains the same
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Flowmodoro Timer</h1>
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-1/2">
+          <Timer time={time} isBreak={isBreak} breakTime={breakTime} />
+          <button
+            onClick={handleStartStop}
+            className={`mt-4 px-4 py-2 rounded ${
+              isRunning ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+            } text-white`}
+          >
+            {isRunning ? 'Stop' : 'Start'}
+          </button>
+        </div>
+        <div className="w-full md:w-1/2">
+          <TaskList onSelectTask={setSelectedTask} selectedTask={selectedTask} tasks={tasks} />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default TimerPage;

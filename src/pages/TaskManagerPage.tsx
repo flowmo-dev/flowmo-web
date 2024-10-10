@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TaskManager from '../components/TaskManager';
 import useApi from '../hooks/useApi';
 
@@ -13,7 +13,7 @@ function TaskManagerPage() {
 
   useEffect(() => {
     fetchTasks();
-  });
+  }, []);
 
   const fetchTasks = async () => {
     try {

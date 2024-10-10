@@ -6,13 +6,28 @@ import { useAuth } from '../contexts/AuthContext';
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [apiUrl, setApiUrl] = useState(import.meta.env.VITE_DEFAULT_API_URL);
+  const [apiUrl, setApiUrl] = useState(import.meta.env.VITE_DEFAULT_API_URL || '');
   const { login, register } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('login');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    if (!apiUrl) {
+      setError('API URL is required');
+      return;
+    }
+
+    try {
+      new URL(apiUrl); // Validate URL
+    } catch {
+      setError('Invalid API URL');
+      return;
+    }
+
     try {
       if (activeTab === 'login') {
         await login(username, password, apiUrl);
@@ -22,7 +37,7 @@ function LoginPage() {
       navigate('/');
     } catch (error) {
       console.error(`${activeTab === 'login' ? 'Login' : 'Registration'} failed:`, error);
-      // Handle error (e.g., show error message)
+      setError(`${activeTab === 'login' ? 'Login' : 'Registration'} failed. Please check your credentials and try again.`);
     }
   };
 
@@ -63,6 +78,7 @@ function LoginPage() {
           <Button type="submit" color="primary" className="w-full">
             {activeTab === 'login' ? 'Login' : 'Register'}
           </Button>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </form>
       </CardBody>
     </Card>
