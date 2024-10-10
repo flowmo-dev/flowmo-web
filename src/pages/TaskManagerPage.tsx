@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import TaskManager from '../components/TaskManager';
-import { useAuth } from '../contexts/AuthContext';
-import createApi from '../services/api';
+import useApi from '../hooks/useApi';
 
 interface Task {
   id: string;
@@ -10,12 +9,11 @@ interface Task {
 
 function TaskManagerPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const { apiUrl } = useAuth();
-  const api = createApi(apiUrl);
+  const api = useApi();
 
   useEffect(() => {
     fetchTasks();
-  }, [apiUrl]);
+  });
 
   const fetchTasks = async () => {
     try {

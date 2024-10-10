@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import createApi from '../services/api';
+import axios from 'axios';
 
 interface User {
   id: string;
@@ -9,6 +9,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  token: string | null;
   apiUrl: string;
   login: (username: string, password: string, apiUrl: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
@@ -21,7 +22,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [apiUrl, setApiUrl] = useState(import.meta.env.VITE_DEFAULT_API_URL);
-  const api = createApi(apiUrl);
+  const [token, setToken] = useState<string | null>(null);
+  const api = axios.create({
+    baseURL: apiUrl,
+    withCredentials: true,
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,23 +43,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (username: string, password: string, newApiUrl: string) => {
     setApiUrl(newApiUrl);
     const response = await api.post('/auth/login', { username, password });
-    setUser(response.data.user);
+    setToken(response.data.token);
   };
 
   const register = async (username: string, password: string) => {
     const response = await api.post('/auth/register', { username, password });
-    setUser(response.data.user);
+    setToken(response.data.token);
   };
 
   const logout = async () => {
     await api.post('/auth/logout');
+    setToken(null);
     setUser(null);
   };
 
   return (
     <AuthContext.Provider value={{ 
       user, 
-      isAuthenticated: !!user, 
+      isAuthenticated: !!token, 
+      token,
       apiUrl,
       login, 
       register, 

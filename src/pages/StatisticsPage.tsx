@@ -3,8 +3,7 @@ import { Card, CardBody, CardHeader, Select, SelectItem, Table, TableHeader, Tab
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { useSpring, animated } from 'react-spring';
 import StatisticsChart from '../components/StatisticsChart';
-import { useAuth } from '../contexts/AuthContext';
-import createApi from '../services/api';
+import useApi from '../hooks/useApi';
 
 interface FocusSession {
   id: string;
@@ -16,8 +15,7 @@ interface FocusSession {
 function StatisticsPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [focusSessions, setFocusSessions] = useState<FocusSession[]>([]);
-  const { apiUrl } = useAuth();
-  const api = createApi(apiUrl);
+  const api = useApi();
 
   const fadeIn = useSpring({
     from: { opacity: 0 },
@@ -27,7 +25,7 @@ function StatisticsPage() {
 
   useEffect(() => {
     fetchFocusSessions();
-  }, [selectedDate, apiUrl]);
+  }, [selectedDate]);
 
   const fetchFocusSessions = async () => {
     try {

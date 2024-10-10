@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card, CardBody, CardHeader, Select, SelectItem } from "@nextui-org/react";
-import { Play, Pause, RotateCcw, Coffee } from 'lucide-react';
-import Timer from '../components/Timer';
-import { useAuth } from '../contexts/AuthContext';
-import createApi from '../services/api';
+import { useState, useEffect } from 'react';
+import useApi from '../hooks/useApi';
 
 interface Task {
   id: string;
@@ -18,20 +14,19 @@ interface FocusSession {
 }
 
 function TimerPage() {
-  const [selectedTask, setSelectedTask] = useState('');
+  const [selectedTask, _setSelectedTask] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [isBreak, setIsBreak] = useState(false);
   const [breakTime, setBreakTime] = useState(0);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [focusSessions, setFocusSessions] = useState<FocusSession[]>([]);
-  const { apiUrl } = useAuth();
-  const api = createApi(apiUrl);
+  const api = useApi();
 
   useEffect(() => {
     fetchTasks();
     fetchFocusSessions();
-  }, [apiUrl]);
+  });
 
   const fetchTasks = async () => {
     try {
