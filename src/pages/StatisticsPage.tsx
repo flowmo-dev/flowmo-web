@@ -61,7 +61,7 @@ function StatisticsPage() {
   });
 
   return (
-    <animated.div style={fadeIn} className="container mx-auto p-4">
+    <animated.div style={fadeIn} className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">Statistics</h1>
       <Card className="mb-4">
         <CardHeader>
