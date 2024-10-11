@@ -31,7 +31,6 @@ const BreakEndModal: React.FC = () => {
       .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  // showBreakEndModal を監視して, trueになったときストップウォッチをスタート
   useEffect(() => {
     if (showBreakEndModal) {
       start();
