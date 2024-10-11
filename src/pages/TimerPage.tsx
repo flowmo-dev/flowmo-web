@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import useApi from '../hooks/useApi';
+import { Button, Card, CardBody, CardHeader, Select, SelectItem } from "@nextui-org/react";
+import { Play, Pause, RotateCcw, Coffee } from 'lucide-react';
 import Timer from '../components/Timer';
-import TaskList from '../components/TaskList';
+import useApi from '../hooks/useApi';
 
 interface Task {
-  id: string;
+  id: number;
   name: string;
-}
-
-interface FocusSession {
-  id: string;
-  taskName: string;
-  duration: number;
-  date: string;
 }
 
 function TimerPage() {
@@ -22,12 +16,11 @@ function TimerPage() {
   const [isBreak, setIsBreak] = useState(false);
   const [breakTime, setBreakTime] = useState(0);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [focusSessions, setFocusSessions] = useState<FocusSession[]>([]);
+
   const api = useApi();
 
   useEffect(() => {
     fetchTasks();
-    fetchFocusSessions();
   }, []);
 
   const fetchTasks = async () => {
@@ -36,15 +29,6 @@ function TimerPage() {
       setTasks(response.data);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
-    }
-  };
-
-  const fetchFocusSessions = async () => {
-    try {
-      const response = await api.get('/focus-sessions');
-      setFocusSessions(response.data);
-    } catch (error) {
-      console.error('Failed to fetch focus sessions:', error);
     }
   };
 
@@ -68,42 +52,102 @@ function TimerPage() {
 
   const handleStartStop = async () => {
     if (!isRunning && !isBreak && selectedTask) {
+      // Start a new focus session
       setIsRunning(true);
     } else if (isRunning && !isBreak) {
+      // End the current session and save it
       setIsRunning(false);
       try {
-        const response = await api.post('/focus-sessions', {
-          taskId: selectedTask,
+        await createFocusSession({
+          taskId: tasks.find(t => t.name === selectedTask)?.id || 0, // Workaround
           duration: time,
-          date: new Date().toISOString(),
+          date: new Date(),
         });
-        setFocusSessions([...focusSessions, response.data]);
       } catch (error) {
-        console.error('Failed to save focus session:', error);
+        console.error('Error saving focus session:', error);
       }
     }
   };
 
+  const createFocusSession = async (focusSession: { taskId: number; duration: number; date: Date }) => {
+    try {
+      await api.post('/focus-sessions', focusSession);
+    } catch (error) {
+      console.error('Failed to save focus session:', error);
+    }
+  };
+
+  const handleReset = () => {
+    setTime(0);
+    setIsRunning(false);
+    setIsBreak(false);
+    setBreakTime(0);
+  };
+
+  const handleBreak = () => {
+    const calculatedBreakTime = Math.floor(time / 5);
+    setBreakTime(calculatedBreakTime);
+    setTime(0);
+    setIsBreak(true);
+    setIsRunning(true);
+  };
+
+  const handleTaskSelect = (taskId: string) => {
+    const task = tasks.find(t => t.id === parseInt(taskId));
+    if (task) {
+      setSelectedTask(task.name);
+    }
+  };
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Flowmodoro Timer</h1>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-1/2">
-          <Timer time={time} isBreak={isBreak} breakTime={breakTime} />
-          <button
+    <Card className="max-w-md mx-auto">
+      <CardHeader className="flex justify-center">
+        <h2 className="text-2xl font-bold">Flowmodoro Timer</h2>
+      </CardHeader>
+      <CardBody>
+        <Select 
+          label="Select a task" 
+          placeholder="Choose a task"
+          className="mb-4"
+          onChange={(e) => handleTaskSelect(e.target.value)}
+        >
+          {tasks.map((task) => (
+            <SelectItem key={task.id} value={task.id.toString()}>
+              {task.name}
+            </SelectItem>
+          ))}
+        </Select>
+        {selectedTask && <p className="mb-4">Current task: {selectedTask}</p>}
+        <Timer time={time} isBreak={isBreak} breakTime={breakTime} />
+        <div className="flex justify-center space-x-4 mt-4">
+          <Button
             onClick={handleStartStop}
-            className={`mt-4 px-4 py-2 rounded ${
-              isRunning ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-            } text-white`}
+            color={isRunning ? "danger" : "success"}
+            isDisabled={!selectedTask && !isRunning}
           >
-            {isRunning ? 'Stop' : 'Start'}
-          </button>
+            {isRunning ? <Pause size={24} /> : <Play size={24} />}
+          </Button>
+          <Button
+            onClick={handleReset}
+            color="warning"
+          >
+            <RotateCcw size={24} />
+          </Button>
+          <Button
+            onClick={handleBreak}
+            color="primary"
+            isDisabled={isBreak || time === 0}
+          >
+            <Coffee size={24} />
+          </Button>
         </div>
-        <div className="w-full md:w-1/2">
-          <TaskList onSelectTask={setSelectedTask} selectedTask={selectedTask} tasks={tasks} />
-        </div>
-      </div>
-    </div>
+        {isBreak && (
+          <p className="text-center mt-4 text-blue-600 font-semibold">
+            Break time! Relax for {Math.floor(breakTime / 60)}:{(breakTime % 60).toString().padStart(2, '0')}
+          </p>
+        )}
+      </CardBody>
+    </Card>
   );
 }
 
