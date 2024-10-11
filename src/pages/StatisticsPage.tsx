@@ -54,11 +54,48 @@ function StatisticsPage() {
   const totalFocusTime = focusSessions.reduce((total, session) => total + session.duration, 0);
   const averageFocusTime = focusSessions.length > 0 ? totalFocusTime / focusSessions.length : 0;
 
-  const hourlyData = Array.from({ length: 24 }, (_, hour) => {
-    const sessionsInHour = focusSessions.filter(session => new Date(session.date).getHours() === hour);
-    const totalDuration = sessionsInHour.reduce((total, session) => total + session.duration, 0);
+  const hourlyData = Array.from({ length: 24 }, (_, hour) => { // XXX: ロジックが謎
+    // Filter sessions that overlap with the current hour
+    const sessionsInHour = focusSessions.filter(session => {
+        const sessionStart = new Date(session.date);
+        const sessionEnd = new Date(session.date);
+        sessionEnd.setMinutes(sessionEnd.getMinutes() + session.duration);
+
+        const startHour = sessionStart.getHours();
+        const endHour = sessionEnd.getHours();
+
+        return (startHour <= hour && hour <= endHour);
+    });
+
+    // Calculate the total duration for the current hour
+    const totalDuration = sessionsInHour.reduce((total, session) => {
+        const sessionStart = new Date(session.date);
+        const sessionEnd = new Date(session.date);
+        sessionEnd.setMinutes(sessionEnd.getMinutes() + session.duration);
+
+        const sessionStartHour = sessionStart.getHours();
+        const sessionEndHour = sessionEnd.getHours();
+
+        if (sessionStartHour === sessionEndHour) {
+            // If the session is entirely within one hour, add the full duration
+            return total + session.duration;
+        } else {
+            // If the session spans multiple hours, calculate the portion for the current hour
+            const hourStart = new Date(sessionStart);
+            hourStart.setHours(hour, 0, 0, 0);
+            const hourEnd = new Date(hourStart);
+            hourEnd.setHours(hour + 1, 0, 0, 0);
+
+            const overlapStart = sessionStart < hourStart ? hourStart : sessionStart;
+            const overlapEnd = sessionEnd > hourEnd ? hourEnd : sessionEnd;
+
+            const overlapDuration = (overlapEnd.getTime() - overlapStart.getTime()) / 1000 / 60; // duration in minutes
+            return total + Math.max(0, overlapDuration);
+        }
+    }, 0);
+
     return { hour, duration: totalDuration };
-  });
+});
 
   return (
     <animated.div style={fadeIn} className="container mx-auto">
