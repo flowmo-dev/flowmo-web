@@ -77,6 +77,7 @@ function TimerPage() {
   };
 
   const handleEndSession = useCallback(async () => {
+    setShowEndConfirmation(false);
     resetFocus();
     stopFocus();
     const focusSession: FocusSession = {
@@ -106,7 +107,7 @@ function TimerPage() {
     <>
       <Card className="max-w-md mx-auto mb-4">
         <CardHeader className="flex justify-center">
-          <h2 className="text-2xl font-bold">Flowmodoro Timer</h2>
+          <h3 className="text-xl font-bold">Timer</h3>
         </CardHeader>
         <CardBody>
           <Select
