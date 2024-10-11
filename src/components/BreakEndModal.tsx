@@ -13,12 +13,6 @@ const BreakEndModal: React.FC = () => {
     setShowBreakEndModal(false);
   };
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
   return (
     <Modal isOpen={showBreakEndModal} onClose={() => setShowBreakEndModal(false)}>
       <ModalContent>
