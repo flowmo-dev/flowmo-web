@@ -29,21 +29,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     withCredentials: true,
   });
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (token) {
-        try {
-          const response = await api.get('/auth/user');
-          setUser(response.data);
-        } catch (error) {
-          console.error('Failed to fetch user data:', error);
-          setUser(null);
-          setToken(null);
-        }
-      }
-    };
-    checkAuth();
-  }, [token, apiUrl]);
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     if (token) {
+  //       try {
+  //         const response = await api.get('/auth/user');
+  //         setUser(response.data);
+  //       } catch (error) {
+  //         console.error('Failed to fetch user data:', error);
+  //         setUser(null);
+  //         setToken(null);
+  //       }
+  //     }
+  //   };
+  //   checkAuth();
+  // }, [token, apiUrl]);
 
   const login = async (username: string, password: string, newApiUrl: string) => {
     setApiUrl(newApiUrl);
