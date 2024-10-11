@@ -115,7 +115,11 @@ function App() {
                 <LogoutConfirmationModal
                   visible={showLogoutConfirmationModal}
                   onClose={() => setShowLogoutConfirmationModal(false)}
-                  onConfirm={logout}
+                  onConfirm={() => {
+                    logout();
+                    setShowLogoutConfirmationModal(false);
+                    }
+                  }
                 />
               </div>
             </Router>
