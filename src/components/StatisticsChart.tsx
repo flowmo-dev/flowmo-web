@@ -30,7 +30,7 @@ const StatisticsChart: React.FC<StatisticsChartProps> = ({ data }) => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Minutes',
+          text: 'Focus Duration (minutes)',
         },
       },
       x: {
