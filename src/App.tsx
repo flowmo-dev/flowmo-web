@@ -66,7 +66,7 @@ function App() {
               <div className="min-h-screen bg-background text-foreground">
                 <Navbar>
                   <NavbarBrand className="hidden sm:block">
-                    <Link to="/" className="font-bold text-inherit">Flowmodoro</Link>
+                    <Link to="/" className="font-bold text-inherit">Flowmo</Link>
                   </NavbarBrand>
                   <NavbarContent className="flex gap-4" justify="center">
                     {isAuthenticated && (
