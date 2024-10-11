@@ -110,21 +110,25 @@ function TimerPage() {
           <h3 className="text-xl font-bold">Timer</h3>
         </CardHeader>
         <CardBody>
-          <Select
-            label="Select a task"
-            placeholder="Choose a task"
-            className="mb-4"
-            onChange={(e) => handleTaskSelect(e.target.value)}
-            selectedKeys={[tasks.find(t => t.name === selectedTask)?.id.toString() || '']}
-          >
-            {tasks.map((task) => (
-              <SelectItem key={task.id} value={task.id.toString()}>
-                {task.name}
-              </SelectItem>
-            ))}
-          </Select>
-          <Timer time={isBreakRunning ? breakTime : focusTime} isBreak={isBreakRunning} />
-          <div className="flex justify-center space-x-4 mt-4">
+          <div className="pl-4 pr-4">
+            <Select
+              variant="bordered"
+              label="Select a task"
+              className="mb-4"
+              onChange={(e) => handleTaskSelect(e.target.value)}
+              selectedKeys={[tasks.find(t => t.name === selectedTask)?.id.toString() || '']}
+            >
+              {tasks.map((task) => (
+                <SelectItem key={task.id} value={task.id.toString()}>
+                  {task.name}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+          <div className="p-8">
+            <Timer time={isBreakRunning ? breakTime : focusTime} isBreak={isBreakRunning} />
+          </div>
+          <div className="flex justify-center space-x-8">
             <Button onClick={handleStartPause} color={isFocusRunning ? "warning" : "success"} isDisabled={!selectedTask}>
               {isFocusRunning ? <Pause size={24} /> : <Play size={24} />}
             </Button>
