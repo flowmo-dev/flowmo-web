@@ -29,7 +29,8 @@ export const FocusStopwatchProvider: React.FC<{ children: ReactNode }> = ({ chil
   };
 
   const resetFocus = () => {
-    reset();
+    console.log('Resetting focus timer');
+    reset(undefined, false);
   };
 
   return (

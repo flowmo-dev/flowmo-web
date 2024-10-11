@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Button, Card, CardBody, CardHeader, Select, SelectItem
+  Button, Card, CardBody, CardHeader, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem
 } from "@nextui-org/react";
 import { Play, Pause, Coffee, StopCircle } from 'lucide-react';
 import Timer from '../components/Timer';
@@ -32,10 +32,11 @@ function TimerPage() {
   const [selectedTask, setSelectedTask] = useState('');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
+  const [showEndConfirmation, setShowEndConfirmation] = useState(false);
 
   const api = useApi();
 
-  const { timeLeft: breakTime, isBreakRunning, startBreak, stopBreak } = useBreakTimer();
+  const { timeLeft: breakTime, isBreakRunning, startBreak, stopBreak, onExpire } = useBreakTimer();
   const { elapsedTime: focusTime, isFocusRunning, startFocus, stopFocus, resetFocus } = useFocusStopwatch();
   const { sessionHistory, addSessionRecord, resetSessionHistory } = useSessionHistory(); // Use the session history context
 
@@ -69,14 +70,13 @@ function TimerPage() {
   };
 
   const handleBreak = () => {
-    stopFocus();
     const calculatedBreakTime = Math.floor(focusTime / 5);
     addSessionRecord('focus', focusTime);
     resetFocus();
     startBreak(calculatedBreakTime);
   };
-
   const handleEndSession = useCallback(async () => {
+    resetFocus();
     stopFocus();
     const focusSession: FocusSession = {
       taskId: tasks.find(t => t.name === selectedTask)?.id || 0,
@@ -97,7 +97,6 @@ function TimerPage() {
   };
 
   const resetSession = () => {
-    stopBreak();
     setSessionStartTime(null);
     resetSessionHistory();
   };
@@ -130,7 +129,7 @@ function TimerPage() {
             <Button onClick={handleBreak} color="primary" isDisabled={isBreakRunning || focusTime === 0}>
               <Coffee size={24} />
             </Button>
-            <Button onClick={handleEndSession} color="secondary" isDisabled={!sessionStartTime}>
+            <Button onClick={() => setShowEndConfirmation(true)} color="secondary" isDisabled={!sessionStartTime}>
               <StopCircle size={24} />
             </Button>
           </div>
@@ -143,6 +142,19 @@ function TimerPage() {
       </Card>
 
       <SessionHistory history={sessionHistory} />
+
+      <Modal isOpen={showEndConfirmation} onClose={() => setShowEndConfirmation(false)}>
+        <ModalContent>
+          <ModalHeader>End Session</ModalHeader>
+          <ModalBody>
+            Are you sure you want to end the current session? This will save your progress.
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={handleEndSession}>End and Save</Button>
+            <Button color="primary" onClick={() => setShowEndConfirmation(false)}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

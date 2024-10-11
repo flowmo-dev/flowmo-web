@@ -1,10 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useTimer } from 'react-timer-hook';
 
 interface BreakTimerContextType {
   timeLeft: number;
   isBreakRunning: boolean;
   startBreak: (duration: number) => void;
   stopBreak: () => void;
+  onExpire: (callback: () => void) => void;
   showBreakEndModal: boolean;
   setShowBreakEndModal: (value: boolean) => void;
 }
@@ -24,28 +26,47 @@ interface BreakTimerProviderProps {
 }
 
 export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children }) => {
-  const [timeLeft, setTimeLeft] = useState(0);
   const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showBreakEndModal, setShowBreakEndModal] = useState(false);
+  const [expiryTimestamp, setExpiryTimestamp] = useState<Date | undefined>(undefined);
+
+  const { seconds, minutes, isRunning, pause, restart } = useTimer({
+    expiryTimestamp: expiryTimestamp ?? new Date(), // Fallback to current date if undefined
+    autoStart: false,
+    onExpire: () => {
+      setIsBreakRunning(false);
+      stop();
+      setShowBreakEndModal(true); // Show modal when the break ends
+    },
+  });
 
   const startBreak = (duration: number) => {
-    setTimeLeft(duration);
+    const time = new Date();
+    time.setSeconds(time.getSeconds() + duration); // Set the expiration time
+    setExpiryTimestamp(time);
     setIsBreakRunning(true);
     setShowBreakEndModal(false); // Hide modal when starting a new break
+    restart(time); // Start the timer
   };
 
   const stopBreak = () => {
     setIsBreakRunning(false);
-    setShowBreakEndModal(true); // Show modal when break ends
+    pause(); // Pause the timer
   };
+
+  const onExpire = (callback: () => void) => {
+    callback();
+  }
+    
 
   return (
     <BreakTimerContext.Provider
       value={{
-        timeLeft,
-        isBreakRunning,
+        timeLeft: minutes * 60 + seconds,
+        isBreakRunning: isBreakRunning && isRunning,
         startBreak,
         stopBreak,
+        onExpire,
         showBreakEndModal,
         setShowBreakEndModal,
       }}
