@@ -8,41 +8,86 @@ import TaskManagerPage from './pages/TaskManagerPage';
 import StatisticsPage from './pages/StatisticsPage';
 import LoginPage from './pages/LoginPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { BreakTimerProvider } from './contexts/BreakTimerContext';
+import { FocusStopwatchProvider } from './contexts/FocusStopwatchContext';
+import BreakEndModal from './components/BreakEndModal';
+import { SessionHistoryProvider } from './contexts/SessionHistoryContext';
 
 const pageVariants = {
-  initial: { opacity: 0, x: "20px" },
+  initial: { opacity: 0, x: "-100%" },
   in: { opacity: 1, x: 0 },
-  out: { opacity: 0, x: "-20px" }
+  out: { opacity: 0, x: "100%" }
 };
 
 const pageTransition = {
   type: "tween",
   ease: "anticipate",
-  duration: 0.2
+  duration: 0.5
 };
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial="initial"
-        animate="in"
-        exit="out"
-        variants={pageVariants}
-        transition={pageTransition}
-        style={{ position: 'absolute', width: '100%', padding: '20px' }}
-      >
-        <Routes location={location}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={isAuthenticated ? <TimerPage /> : <Navigate to="/login" />} />
-          <Route path="/tasks" element={isAuthenticated ? <TaskManagerPage /> : <Navigate to="/login" />} />
-          <Route path="/statistics" element={isAuthenticated ? <StatisticsPage /> : <Navigate to="/login" />} />
-        </Routes>
-      </motion.div>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+              >
+                <TimerPage />
+              </motion.div>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/tasks"
+          element={
+            isAuthenticated ? (
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+              >
+                <TaskManagerPage />
+              </motion.div>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/statistics"
+          element={
+            isAuthenticated ? (
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+              >
+                <StatisticsPage />
+              </motion.div>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+      </Routes>
     </AnimatePresence>
   );
 };
@@ -52,60 +97,69 @@ function App() {
 
   return (
     <NextUIProvider>
-      <Router>
-        <div className="min-h-screen bg-background text-foreground">
-          <Navbar>
-            <NavbarBrand>
-              <p className="font-bold text-inherit">Flowmodoro Timer</p>
-            </NavbarBrand>
-            <NavbarContent justify="end">
-              {isAuthenticated ? (
-                <>
-                  <NavbarItem>
-                    <Button as={Link} to="/" color="primary" variant="flat">
-                      <Coffee size={24} />
-                    </Button>
-                  </NavbarItem>
-                  <NavbarItem>
-                    <Button as={Link} to="/tasks" color="primary" variant="flat">
-                      <CheckSquare size={24} />
-                    </Button>
-                  </NavbarItem>
-                  <NavbarItem>
-                    <Button as={Link} to="/statistics" color="primary" variant="flat">
-                      <BarChart size={24} />
-                    </Button>
-                  </NavbarItem>
-                  <NavbarItem>
-                    <Button onClick={logout} color="danger" variant="flat">
-                      <LogOut size={24} />
-                    </Button>
-                  </NavbarItem>
-                </>
-              ) : (
-                <NavbarItem>
-                  <Button as={Link} to="/login" color="primary" variant="flat">
-                    <LogIn size={24} />
-                  </Button>
-                </NavbarItem>
-              )}
-            </NavbarContent>
-          </Navbar>
-          <main className="container mx-auto relative" style={{ minHeight: 'calc(100vh - 64px)' }}>
-            <AnimatedRoutes />
-          </main>
-        </div>
-      </Router>
+      <BreakTimerProvider>
+        <FocusStopwatchProvider>
+          <SessionHistoryProvider>
+            <Router>
+              <div className="min-h-screen bg-background text-foreground">
+                <Navbar>
+                  <NavbarBrand>
+                    <Link to="/" className="font-bold text-inherit">Flowmodoro</Link>
+                  </NavbarBrand>
+                  <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                    {isAuthenticated && (
+                      <>
+                        <NavbarItem>
+                          <Link to="/" className="flex items-center">
+                            <Coffee className="mr-2" /> Timer
+                          </Link>
+                        </NavbarItem>
+                        <NavbarItem>
+                          <Link to="/tasks" className="flex items-center">
+                            <CheckSquare className="mr-2" /> Tasks
+                          </Link>
+                        </NavbarItem>
+                        <NavbarItem>
+                          <Link to="/statistics" className="flex items-center">
+                            <BarChart className="mr-2" /> Statistics
+                          </Link>
+                        </NavbarItem>
+                      </>
+                    )}
+                  </NavbarContent>
+                  <NavbarContent justify="end">
+                    {isAuthenticated ? (
+                      <NavbarItem>
+                        <Button color="danger" variant="flat" onClick={logout} startContent={<LogOut />}>
+                          Logout
+                        </Button>
+                      </NavbarItem>
+                    ) : (
+                      <NavbarItem>
+                        <Button as={Link} color="primary" to="/login" variant="flat" startContent={<LogIn />}>
+                          Login
+                        </Button>
+                      </NavbarItem>
+                    )}
+                  </NavbarContent>
+                </Navbar>
+                <main className="container mx-auto relative" style={{ minHeight: 'calc(100vh - 64px)' }}>
+                  <AnimatedRoutes />
+                </main>
+                <BreakEndModal />
+              </div>
+            </Router>
+          </SessionHistoryProvider>
+        </FocusStopwatchProvider>
+      </BreakTimerProvider>
     </NextUIProvider>
   );
 }
 
-function AppWithAuth() {
-  return (
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  );
-}
+const AppWithAuth = () => (
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);
 
 export default AppWithAuth;

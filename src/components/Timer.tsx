@@ -3,10 +3,9 @@ import React from 'react';
 interface TimerProps {
   time: number;
   isBreak: boolean;
-  breakTime: number;
 }
 
-const Timer: React.FC<TimerProps> = ({ time, isBreak, breakTime }) => {
+const Timer: React.FC<TimerProps> = ({ time, isBreak }) => {
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
