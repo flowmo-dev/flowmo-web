@@ -8,9 +8,17 @@ import { today } from '@internationalized/date';
 
 interface FocusSession {
   id: string;
-  taskName: string;
   duration: number;
   date: string;
+  records: {
+    type: 'focus' | 'break';
+    duration: number;
+    overTime: number;
+  }[];
+  task: {
+    id: string;
+    name: string;
+  };
 }
 
 function StatisticsPage() {
@@ -98,14 +106,17 @@ function StatisticsPage() {
           <Table>
             <TableHeader>
               <TableColumn>Task</TableColumn>
-              <TableColumn>Duration (minutes)</TableColumn>
+              <TableColumn>Duration(h:m)</TableColumn>
+              <TableColumn>Break count</TableColumn>
               <TableColumn>Time</TableColumn>
             </TableHeader>
             <TableBody>
               {focusSessions.map((session) => (
-                <TableRow key={session.id}>
-                  <TableCell>{session.taskName}</TableCell>
-                  <TableCell>{Math.round(session.duration / 60)}</TableCell>
+                console.log(session),
+                <TableRow key={session.id} onClick={() => console.log(session)}>
+                  <TableCell>{session.task.name}</TableCell>
+                  <TableCell>{Math.round(session.duration / 60 / 60).toString().padStart(2, "0")} : {Math.round(session.duration / 60).toString().padStart(2, "0")}</TableCell>
+                  <TableCell>{session.records.filter(record => record.type === 'break').length}</TableCell>
                   <TableCell>{format(new Date(session.date), 'HH:mm')}</TableCell>
                 </TableRow>
               ))}
