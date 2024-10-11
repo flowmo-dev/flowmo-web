@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardBody, CardHeader, Select, SelectItem, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, DatePicker, DateValue } from "@nextui-org/react";
-import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import { useState, useEffect } from 'react';
+import { Card, CardBody, CardHeader, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, DatePicker, DateValue } from "@nextui-org/react";
+import { format, startOfDay, endOfDay } from 'date-fns';
 import { useSpring, animated } from 'react-spring';
 import StatisticsChart from '../components/StatisticsChart';
 import useApi from '../hooks/useApi';
@@ -17,7 +17,7 @@ function StatisticsPage() {
   const [focusSessions, setFocusSessions] = useState<FocusSession[]>([]);
   const api = useApi();
 
-  const [value, setValue] = React.useState<DateValue>(today("Asia/Tokyo") as unknown as DateValue); // XXX:TypeScriptなんもわからん
+  const [value, setValue] = useState<DateValue>(today("Asia/Tokyo") as unknown as DateValue);
 
   const fadeIn = useSpring({
     from: { opacity: 0 },
@@ -30,14 +30,11 @@ function StatisticsPage() {
   }, [value]);
 
   const fetchFocusSessions = async () => {
-    console.log("value:", value);
     try {
       const response = await api.get('/focus-sessions', {
         params: {
-          // startDate: startOfDay(selectedDate).toISOString(),
-          // endDate: endOfDay(selectedDate).toISOString(),
-          startDate: startOfDay(value.toString()).toISOString(),
-          endOfDay: endOfDay(value.toString()).toISOString(),
+          startDate: startOfDay(new Date(value.toString())).toISOString(),
+          endDate: endOfDay(new Date(value.toString())).toISOString(),
         },
       });
       setFocusSessions(response.data);
@@ -65,11 +62,7 @@ function StatisticsPage() {
         <CardBody>
           <DatePicker
             value={value}
-            onChange={(value) => {
-              setValue(value);
-              fetchFocusSessions()
-              }
-            }
+            onChange={(newValue) => setValue(newValue)}
             label="Birth Date"
             variant="bordered"
             showMonthAndYearPickers
