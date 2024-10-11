@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardBody, CardHeader, Select, SelectItem, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Select, SelectItem, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, DatePicker, DateValue } from "@nextui-org/react";
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { useSpring, animated } from 'react-spring';
 import StatisticsChart from '../components/StatisticsChart';
 import useApi from '../hooks/useApi';
+import { today } from '@internationalized/date';
 
 interface FocusSession {
   id: string;
@@ -13,9 +14,10 @@ interface FocusSession {
 }
 
 function StatisticsPage() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [focusSessions, setFocusSessions] = useState<FocusSession[]>([]);
   const api = useApi();
+
+  const [value, setValue] = React.useState<DateValue>(today("Asia/Tokyo") as unknown as DateValue); // XXX:TypeScriptなんもわからん
 
   const fadeIn = useSpring({
     from: { opacity: 0 },
@@ -25,14 +27,17 @@ function StatisticsPage() {
 
   useEffect(() => {
     fetchFocusSessions();
-  }, [selectedDate]);
+  }, [value]);
 
   const fetchFocusSessions = async () => {
+    console.log("value:", value);
     try {
       const response = await api.get('/focus-sessions', {
         params: {
-          startDate: startOfDay(selectedDate).toISOString(),
-          endDate: endOfDay(selectedDate).toISOString(),
+          // startDate: startOfDay(selectedDate).toISOString(),
+          // endDate: endOfDay(selectedDate).toISOString(),
+          startDate: startOfDay(value.toString()).toISOString(),
+          endOfDay: endOfDay(value.toString()).toISOString(),
         },
       });
       setFocusSessions(response.data);
@@ -58,20 +63,17 @@ function StatisticsPage() {
           <h2 className="text-2xl font-bold">Date Selection</h2>
         </CardHeader>
         <CardBody>
-          <Select
-            label="Select Date"
-            selectedKeys={[selectedDate.toISOString()]}
-            onChange={(e) => setSelectedDate(new Date(e.target.value))}
-          >
-            {Array.from({ length: 7 }, (_, i) => {
-              const date = subDays(new Date(), i);
-              return (
-                <SelectItem key={date.toISOString()} value={date.toISOString()}>
-                  {format(date, 'yyyy-MM-dd')}
-                </SelectItem>
-              );
-            })}
-          </Select>
+          <DatePicker
+            value={value}
+            onChange={(value) => {
+              setValue(value);
+              fetchFocusSessions()
+              }
+            }
+            label="Birth Date"
+            variant="bordered"
+            showMonthAndYearPickers
+          />
         </CardBody>
       </Card>
 
