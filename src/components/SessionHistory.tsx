@@ -31,6 +31,8 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ history }) => {
     setSelectedSession(null);
   };
 
+  const totalDuration = history.reduce((total, record) => total + record.duration, 0);
+
   return (
     <>
       <Card className="max-w-md mx-auto">
@@ -41,23 +43,30 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({ history }) => {
           {history.length === 0 ? (
             <p className="text-center">No sessions recorded yet.</p>
           ) : (
-            <ul className="space-y-2">
-              {history.map((record, index) => (
-                <li 
-                  key={index} 
-                  className={`p-2 rounded ${record.type === 'focus' ? 'bg-blue-100' : 'bg-green-100'} cursor-pointer hover:opacity-80`}
-                  onClick={() => handleSessionClick(record)}
-                >
-                  <span className="font-semibold">{record.type === 'focus' ? 'Focus' : 'Break'}: </span>
-                  {formatTime(record.duration)}
-                  {record.overTime !== undefined && record.overTime > 0 && (
-                    <span className="ml-2 text-red-500">
-                      (Overtime: {formatTime(record.overTime)})
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="space-y-2">
+                {history.map((record, index) => (
+                  <li 
+                    key={index} 
+                    className={`p-2 rounded ${record.type === 'focus' ? 'bg-blue-100' : 'bg-green-100'} cursor-pointer hover:opacity-80`}
+                    onClick={() => handleSessionClick(record)}
+                  >
+                    <span className="font-semibold">{record.type === 'focus' ? 'Focus' : 'Break'}: </span>
+                    {formatTime(record.duration)}
+                    {record.overTime !== undefined && record.overTime > 0 && (
+                      <span className="ml-2 text-red-500">
+                        (Overtime: {formatTime(record.overTime)})
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 pt-2 border-t border-gray-200">
+                <p className="text-center font-bold">
+                  Total Session Time: {formatTime(totalDuration)}
+                </p>
+              </div>
+            </>
           )}
         </CardBody>
       </Card>
