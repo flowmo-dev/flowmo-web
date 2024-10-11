@@ -7,7 +7,7 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [apiUrl, setApiUrl] = useState(import.meta.env.VITE_DEFAULT_API_URL || '');
-  const { login, register } = useAuth();
+  const { login, register, debugLogin } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('login');
   const [error, setError] = useState('');
@@ -38,6 +38,15 @@ function LoginPage() {
     } catch (error) {
       console.error(`${activeTab === 'login' ? 'Login' : 'Registration'} failed:`, error);
       setError(`${activeTab === 'login' ? 'Login' : 'Registration'} failed. Please check your credentials and try again.`);
+    }
+  };
+
+  const handleLoginClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (e.shiftKey) {
+      debugLogin();
+      navigate('/');
+    } else {
+      handleSubmit(e);
     }
   };
 
@@ -75,11 +84,17 @@ function LoginPage() {
             onChange={(e) => setApiUrl(e.target.value)}
             required
           />
-          <Button type="submit" color="primary" className="w-full">
+          <Button 
+            type="submit" 
+            color="primary" 
+            className="w-full"
+            onClick={handleLoginClick}
+          >
             {activeTab === 'login' ? 'Login' : 'Register'}
           </Button>
           {error && <p className="text-red-500 text-sm">{error}</p>}
         </form>
+        <p className="text-center text-sm mt-2">Shift+Click for Debug Mode</p>
       </CardBody>
     </Card>
   );

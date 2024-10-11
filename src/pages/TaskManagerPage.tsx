@@ -18,16 +18,17 @@ function TaskManagerPage() {
   const fetchTasks = async () => {
     try {
       const response = await api.get('/tasks');
-      setTasks(response.data);
+      setTasks(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Failed to fetch tasks:', error);
+      setTasks([]);
     }
   };
 
   const addTask = async (name: string) => {
     try {
       const response = await api.post('/tasks', { name });
-      setTasks([...tasks, response.data]);
+      setTasks(prevTasks => [...prevTasks, response.data]);
     } catch (error) {
       console.error('Failed to add task:', error);
     }
@@ -36,7 +37,7 @@ function TaskManagerPage() {
   const deleteTask = async (id: string) => {
     try {
       await api.delete(`/tasks/${id}`);
-      setTasks(tasks.filter(task => task.id !== id));
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
     } catch (error) {
       console.error('Failed to delete task:', error);
     }
