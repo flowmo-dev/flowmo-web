@@ -8,7 +8,7 @@ import SessionHistory from '../components/SessionHistory';
 import useApi from '../hooks/useApi';
 import { useBreakTimer } from '../contexts/BreakTimerContext';
 import { useFocusStopwatch } from '../contexts/FocusStopwatchContext';
-import { useSessionHistory } from '../contexts/SessionHistoryContext'; // Import the new context
+import { useSessionHistory } from '../contexts/SessionHistoryContext';
 
 interface Task {
   id: number;
@@ -38,7 +38,7 @@ function TimerPage() {
 
   const { timeLeft: breakTime, isBreakRunning, startBreak } = useBreakTimer();
   const { elapsedTime: focusTime, isFocusRunning, startFocus, stopFocus, resetFocus } = useFocusStopwatch();
-  const { sessionHistory, addSessionRecord, resetSessionHistory } = useSessionHistory(); // Use the session history context
+  const { sessionHistory, addSessionRecord, resetSessionHistory } = useSessionHistory();
 
   useEffect(() => {
     fetchTasks();
