@@ -71,7 +71,7 @@ function StatisticsPage() {
           <DatePicker
             value={value}
             onChange={(newValue) => setValue(newValue)}
-            label="Birth Date"
+            label="Select a date"
             variant="bordered"
             showMonthAndYearPickers
           />
