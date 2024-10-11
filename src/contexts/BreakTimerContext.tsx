@@ -32,7 +32,7 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
   
   const [currentBreakDuration, setCurrentBreakDuration] = useState<number>(0);
 
-  const { seconds, minutes, isRunning, pause, restart } = useTimer({
+  const { totalSeconds, isRunning, pause, restart } = useTimer({
     expiryTimestamp: expiryTimestamp ?? new Date(), // Fallback to current date if undefined
     autoStart: false,
     onExpire: () => {
@@ -60,7 +60,7 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
   return (
     <BreakTimerContext.Provider
       value={{
-        timeLeft: minutes * 60 + seconds,
+        timeLeft: totalSeconds,
         currentBreakDuration: currentBreakDuration,
         isBreakRunning: isBreakRunning && isRunning,
         startBreak,

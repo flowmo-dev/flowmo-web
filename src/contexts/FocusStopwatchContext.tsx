@@ -13,7 +13,7 @@ const FocusStopwatchContext = createContext<FocusStopwatchContextProps | undefin
 
 export const FocusStopwatchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const {
-    seconds: elapsedTime,
+    totalSeconds: elapsedTime,
     isRunning: isFocusRunning,
     start,
     pause,
