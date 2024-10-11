@@ -5,7 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 
 function RegisterPage() {
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -13,7 +12,7 @@ function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register(username, email, password);
+      await register(username, password);
       navigate('/');
     } catch (error) {
       console.error('Registration failed:', error);
@@ -33,13 +32,6 @@ function RegisterPage() {
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <Input
-            type="email"
-            label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <Input
