@@ -12,6 +12,7 @@ import { BreakTimerProvider } from './contexts/BreakTimerContext';
 import { FocusStopwatchProvider } from './contexts/FocusStopwatchContext';
 import BreakEndModal from './components/BreakEndModal';
 import { SessionHistoryProvider } from './contexts/SessionHistoryContext';
+import LogoutConfirmationModal from './components/LogoutConfirmationModal';
 
 const pageVariants = {
   initial: { opacity: 0, x: "20px" },
@@ -54,6 +55,8 @@ const AnimatedRoutes = () => {
 function App() {
   const { isAuthenticated, logout } = useAuth();
 
+  const [showLogoutConfirmationModal, setShowLogoutConfirmationModal] = React.useState(false);
+
   return (
     <NextUIProvider>
       <BreakTimerProvider>
@@ -92,7 +95,7 @@ function App() {
                   <NavbarContent justify="end">
                     {isAuthenticated ? (
                       <NavbarItem>
-                        <Button color="danger" variant="flat" onClick={logout} startContent={<LogOut />}>
+                        <Button color="danger" variant="flat" onClick={() => setShowLogoutConfirmationModal(true)} startContent={<LogOut />}>
                           <span className="hidden sm:block">Logout</span>
                         </Button>
                       </NavbarItem>
@@ -109,6 +112,11 @@ function App() {
                   <AnimatedRoutes />
                 </main>
                 <BreakEndModal />
+                <LogoutConfirmationModal
+                  visible={showLogoutConfirmationModal}
+                  onClose={() => setShowLogoutConfirmationModal(false)}
+                  onConfirm={logout}
+                />
               </div>
             </Router>
           </SessionHistoryProvider>
