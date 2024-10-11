@@ -1,9 +1,9 @@
 import React from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
-import { useBreakTimer } from '../contexts/BreakTimerContext'; // 修正: useBreakTimerをインポート
+import { useBreakTimer } from '../contexts/BreakTimerContext';
 
 const BreakEndModal: React.FC = () => {
-  const { showBreakEndModal, setShowBreakEndModal, overTime, stopBreak } = useBreakTimer();
+  const { showBreakEndModal, setShowBreakEndModal, stopBreak } = useBreakTimer();
 
   const handleEndBreak = () => {
     stopBreak();
@@ -22,7 +22,7 @@ const BreakEndModal: React.FC = () => {
         <ModalHeader>Break Over</ModalHeader>
         <ModalBody>
           <p className="text-center text-red-600 text-3xl font-bold">
-            Over Time: {formatTime(overTime)}
+            Over Time
           </p>
           <p>The break time has ended. Please wrap up.</p>
         </ModalBody>
