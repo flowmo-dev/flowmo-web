@@ -78,7 +78,7 @@ function StatisticsPage() {
 
         if (sessionStartHour === sessionEndHour) {
             // If the session is entirely within one hour, add the full duration
-            return total + session.duration;
+            return total + session.duration / 60; // duration in hours
         } else {
             // If the session spans multiple hours, calculate the portion for the current hour
             const hourStart = new Date(sessionStart);
@@ -95,7 +95,7 @@ function StatisticsPage() {
     }, 0);
 
     return { hour, duration: totalDuration };
-});
+  });
 
   return (
     <animated.div style={fadeIn} className="container mx-auto">
