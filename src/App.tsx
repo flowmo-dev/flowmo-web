@@ -62,25 +62,28 @@ function App() {
             <Router>
               <div className="min-h-screen bg-background text-foreground">
                 <Navbar>
-                  <NavbarBrand>
+                  <NavbarBrand className="hidden sm:block">
                     <Link to="/" className="font-bold text-inherit">Flowmodoro</Link>
                   </NavbarBrand>
-                  <NavbarContent className="hidden sm:flex gap-4" justify="center">
+                  <NavbarContent className="flex gap-4" justify="center">
                     {isAuthenticated && (
                       <>
                         <NavbarItem>
                           <Link to="/" className="flex items-center">
-                            <Coffee className="mr-2" /> Timer
+                            <Coffee className="mr-2" />
+                            <span className="hidden sm:block">Timer</span>
                           </Link>
                         </NavbarItem>
                         <NavbarItem>
                           <Link to="/tasks" className="flex items-center">
-                            <CheckSquare className="mr-2" /> Tasks
+                            <CheckSquare className="mr-2" />
+                            <span className="hidden sm:block">Tasks</span>
                           </Link>
                         </NavbarItem>
                         <NavbarItem>
                           <Link to="/statistics" className="flex items-center">
-                            <BarChart className="mr-2" /> Statistics
+                            <BarChart className="mr-2" />
+                            <span className="hidden sm:block">Statistics</span>
                           </Link>
                         </NavbarItem>
                       </>
@@ -90,13 +93,13 @@ function App() {
                     {isAuthenticated ? (
                       <NavbarItem>
                         <Button color="danger" variant="flat" onClick={logout} startContent={<LogOut />}>
-                          Logout
+                          <span className="hidden sm:block">Logout</span>
                         </Button>
                       </NavbarItem>
                     ) : (
                       <NavbarItem>
                         <Button as={Link} color="primary" to="/login" variant="flat" startContent={<LogIn />}>
-                          Login
+                          <span className="hidden sm:block">Login</span>
                         </Button>
                       </NavbarItem>
                     )}
