@@ -120,11 +120,28 @@ function StatisticsPage() {
           <h2 className="text-2xl font-bold">Summary</h2>
         </CardHeader>
         <CardBody>
-          <p>Total Focus Time: {Math.round(totalFocusTime / 60)} minutes</p>
-          <p>Average Focus Session: {Math.round(averageFocusTime / 60)} minutes</p>
-          <p>Number of Sessions: {focusSessions.length}</p>
+          <div className="flex gap-4 justify-around">
+            <Card className="flex-1 text-center shadow-md rounded-lg p-4">
+              <CardHeader>Total<p className="text-xs pl-2">(min)</p></CardHeader>
+              <CardBody className="text-4xl">
+                {Math.round(totalFocusTime / 60).toString()}
+              </CardBody>
+            </Card>
+            <Card className="flex-1 text-center shadow-md rounded-lg p-4">
+              <CardHeader>Average<p className="text-xs pl-2">(min)</p></CardHeader>
+              <CardBody className="text-4xl">
+                {Math.round(averageFocusTime / 60).toString()}
+              </CardBody>
+            </Card>
+            <Card className="flex-1 text-center shadow-md rounded-lg p-4">
+              <CardHeader>Count</CardHeader>
+              <CardBody className="text-4xl">
+                {focusSessions.length}
+              </CardBody>
+            </Card>
+          </div>
         </CardBody>
-      </Card>
+      </Card> 
 
       <Card className="mb-4">
         <CardHeader>
