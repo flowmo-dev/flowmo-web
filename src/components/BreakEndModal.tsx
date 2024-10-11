@@ -8,7 +8,7 @@ const BreakEndModal: React.FC = () => {
   const { addSessionRecord } = useSessionHistory();
 
   const handleEndBreak = () => {
-    addSessionRecord('break', currentBreakDuration, 999);
+    addSessionRecord('break', currentBreakDuration, 1);
     stopBreak();
     setShowBreakEndModal(false);
   };

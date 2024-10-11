@@ -30,6 +30,8 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
   const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showBreakEndModal, setShowBreakEndModal] = useState(false);
   const [expiryTimestamp, setExpiryTimestamp] = useState<Date | undefined>(undefined);
+  
+  const [currentBreakDuration, setCurrentBreakDuration] = useState<number>(0);
 
   const { seconds, minutes, isRunning, pause, restart } = useTimer({
     expiryTimestamp: expiryTimestamp ?? new Date(), // Fallback to current date if undefined
@@ -44,6 +46,7 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
   // const { addSessionRecord } = useSessionHistory(); // Use the session history context
   
   const startBreak = (duration: number) => {
+    setCurrentBreakDuration(duration);
     const time = new Date();
     time.setSeconds(time.getSeconds() + duration); // Set the expiration time
     setExpiryTimestamp(time);
@@ -61,7 +64,7 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
     <BreakTimerContext.Provider
       value={{
         timeLeft: minutes * 60 + seconds,
-        currentBreakDuration: expiryTimestamp ? (expiryTimestamp.getTime() - new Date().getTime()) / 1000 : 0,
+        currentBreakDuration: currentBreakDuration,
         isBreakRunning: isBreakRunning && isRunning,
         startBreak,
         stopBreak,
