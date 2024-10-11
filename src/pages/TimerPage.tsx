@@ -14,6 +14,7 @@ interface FocusSession {
   taskId: number;
   duration: number;
   date: Date;
+  records: SessionRecord[];
 }
 
 interface SessionRecord {
@@ -98,6 +99,7 @@ function TimerPage() {
         taskId: tasks.find(t => t.name === selectedTask)?.id || 0,
         duration: sessionHistory.reduce((total, record) => total + record.duration, 0),
         date: sessionStartTime || new Date(),
+        records: sessionHistory,
       });
     } catch (error) {
       console.error('Error saving focus session:', error);
