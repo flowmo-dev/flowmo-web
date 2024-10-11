@@ -217,12 +217,6 @@ function TimerPage() {
               {isRunning ? <Pause size={24} /> : <Play size={24} />}
             </Button>
             <Button
-              onClick={handleReset}
-              color="danger"
-            >
-              <RotateCcw size={24} />
-            </Button>
-            <Button
               onClick={handleBreak}
               color="primary"
               isDisabled={isBreak || time === 0}
