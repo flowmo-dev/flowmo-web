@@ -36,7 +36,7 @@ function TimerPage() {
 
   const api = useApi();
 
-  const { timeLeft: breakTime, isBreakRunning, startBreak, stopBreak, onExpire } = useBreakTimer();
+  const { timeLeft: breakTime, isBreakRunning, startBreak, stopBreak } = useBreakTimer();
   const { elapsedTime: focusTime, isFocusRunning, startFocus, stopFocus, resetFocus } = useFocusStopwatch();
   const { sessionHistory, addSessionRecord, resetSessionHistory } = useSessionHistory(); // Use the session history context
 
@@ -75,6 +75,7 @@ function TimerPage() {
     resetFocus();
     startBreak(calculatedBreakTime);
   };
+
   const handleEndSession = useCallback(async () => {
     resetFocus();
     stopFocus();

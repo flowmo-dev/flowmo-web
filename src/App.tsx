@@ -14,15 +14,15 @@ import BreakEndModal from './components/BreakEndModal';
 import { SessionHistoryProvider } from './contexts/SessionHistoryContext';
 
 const pageVariants = {
-  initial: { opacity: 0, x: "-100%" },
+  initial: { opacity: 0, x: "20px" },
   in: { opacity: 1, x: 0 },
-  out: { opacity: 0, x: "100%" }
+  out: { opacity: 0, x: "-20px" }
 };
 
 const pageTransition = {
   type: "tween",
   ease: "anticipate",
-  duration: 0.5
+  duration: 0.2
 };
 
 const AnimatedRoutes = () => {
@@ -31,63 +31,22 @@ const AnimatedRoutes = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? (
-              <motion.div
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={pageVariants}
-                transition={pageTransition}
-              >
-                <TimerPage />
-              </motion.div>
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-        <Route
-          path="/tasks"
-          element={
-            isAuthenticated ? (
-              <motion.div
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={pageVariants}
-                transition={pageTransition}
-              >
-                <TaskManagerPage />
-              </motion.div>
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-        <Route
-          path="/statistics"
-          element={
-            isAuthenticated ? (
-              <motion.div
-                initial="initial"
-                animate="in"
-                exit="out"
-                variants={pageVariants}
-                transition={pageTransition}
-              >
-                <StatisticsPage />
-              </motion.div>
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-      </Routes>
+      <motion.div
+        key={location.pathname}
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+        style={{ position: 'absolute', width: '100%', padding: '20px' }}
+      >
+        <Routes location={location}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={isAuthenticated ? <TimerPage /> : <Navigate to="/login" />} />
+          <Route path="/tasks" element={isAuthenticated ? <TaskManagerPage /> : <Navigate to="/login" />} />
+          <Route path="/statistics" element={isAuthenticated ? <StatisticsPage /> : <Navigate to="/login" />} />
+        </Routes>
+      </motion.div>
     </AnimatePresence>
   );
 };

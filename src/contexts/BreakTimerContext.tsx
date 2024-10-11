@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useTimer } from 'react-timer-hook';
+// import { useSessionHistory } from './SessionHistoryContext';
 
 interface BreakTimerContextType {
   timeLeft: number;
+  currentBreakDuration: number;
   isBreakRunning: boolean;
   startBreak: (duration: number) => void;
   stopBreak: () => void;
-  onExpire: (callback: () => void) => void;
   showBreakEndModal: boolean;
   setShowBreakEndModal: (value: boolean) => void;
 }
@@ -40,6 +41,8 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
     },
   });
 
+  // const { addSessionRecord } = useSessionHistory(); // Use the session history context
+  
   const startBreak = (duration: number) => {
     const time = new Date();
     time.setSeconds(time.getSeconds() + duration); // Set the expiration time
@@ -54,19 +57,14 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
     pause(); // Pause the timer
   };
 
-  const onExpire = (callback: () => void) => {
-    callback();
-  }
-    
-
   return (
     <BreakTimerContext.Provider
       value={{
         timeLeft: minutes * 60 + seconds,
+        currentBreakDuration: expiryTimestamp ? (expiryTimestamp.getTime() - new Date().getTime()) / 1000 : 0,
         isBreakRunning: isBreakRunning && isRunning,
         startBreak,
         stopBreak,
-        onExpire,
         showBreakEndModal,
         setShowBreakEndModal,
       }}
