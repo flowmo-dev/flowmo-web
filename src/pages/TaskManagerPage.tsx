@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import TaskManager from '../components/TaskManager';
 import useApi from '../hooks/useApi';
 
