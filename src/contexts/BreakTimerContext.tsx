@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useTimer } from 'react-timer-hook';
-// import { useSessionHistory } from './SessionHistoryContext';
 
 interface BreakTimerContextType {
   timeLeft: number;
@@ -43,8 +42,6 @@ export const BreakTimerProvider: React.FC<BreakTimerProviderProps> = ({ children
     },
   });
 
-  // const { addSessionRecord } = useSessionHistory(); // Use the session history context
-  
   const startBreak = (duration: number) => {
     setCurrentBreakDuration(duration);
     const time = new Date();
