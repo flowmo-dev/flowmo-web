@@ -122,13 +122,13 @@ function StatisticsPage() {
         <CardBody>
           <div className="flex gap-4 justify-around">
             <Card className="flex-1 text-center shadow-md rounded-lg p-4">
-              <CardHeader>Total<p className="text-xs pl-2">(min)</p></CardHeader>
+              <CardHeader>Total<p className="text-xs pl-2 hidden sm:block">(min)</p></CardHeader>
               <CardBody className="text-4xl">
                 {Math.round(totalFocusTime / 60).toString()}
               </CardBody>
             </Card>
             <Card className="flex-1 text-center shadow-md rounded-lg p-4">
-              <CardHeader>Average<p className="text-xs pl-2">(min)</p></CardHeader>
+              <CardHeader>Average<p className="text-xs pl-2 hidden sm:block">(min)</p></CardHeader>
               <CardBody className="text-4xl">
                 {Math.round(averageFocusTime / 60).toString()}
               </CardBody>
