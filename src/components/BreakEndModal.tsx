@@ -9,14 +9,14 @@ const BreakEndModal: React.FC = () => {
   const { addSessionRecord } = useSessionHistory();
 
   const handleEndBreak = () => {
-    addSessionRecord('break', currentBreakDuration, seconds);
+    addSessionRecord('break', currentBreakDuration, totalSeconds);
     reset(undefined, false);
     stopBreak();
     setShowBreakEndModal(false);
   };
 
   const {
-    seconds,
+    totalSeconds,
     reset,
     start
   } = useStopwatch({ autoStart: false });
@@ -43,7 +43,7 @@ const BreakEndModal: React.FC = () => {
         <ModalHeader>Break Over</ModalHeader>
         <ModalBody>
           <p className="text-center text-red-600 text-3xl font-bold">
-            {formatTime(seconds)}
+            {formatTime(totalSeconds)}
           </p>
           <p>The break time has ended. Please wrap up.</p>
         </ModalBody>
